@@ -269,11 +269,12 @@ class Curl
             }
             else {
                 $contentType = $this->responseHeader()['Content-Type'] ?? null;
-                switch ($contentType) {
-                    case 'application/json': return json_decode($raw, true);
-                    case 'application/xml' :
-                    case 'text/xml'        : return XML::parse($raw);
-                    default                : return $raw;
+                if (strpos($contentType, 'application/json') !== false) {
+                    return json_decode($raw, true);
+                } else if (strpos($contentType, 'application/xml') !== false || strpos($contentType, 'text/xml') !== false) {
+                    return XML::parse($raw);
+                } else {
+                    return $raw;
                 }
             }
         }
